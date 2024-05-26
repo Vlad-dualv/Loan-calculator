@@ -4,16 +4,28 @@ const monthsToPayInput = document.getElementById('months-to-pay');
 const monthlyPaymentResult = document.getElementById('monthly-payment-result');
 
 function calculateLoan() {
-  const loanAmountValue = loanAmountInput.value;
-  const interestRateValue = interestRateInput.value;
-  const monthsToPayValue = monthsToPayInput.value;
-  const interest =
-    (loanAmountValue * (interestRateValue * 0.01)) / monthsToPayValue;
-  const monthlyPayment = (
-    loanAmountValue / monthsToPayValue +
-    interest
-  ).toFixed(2);
-  monthlyPaymentResult.innerHTML = `Monthly Payment: ${monthlyPayment}€`;
+  const loanAmountValue = parseFloat(loanAmountInput.value);
+  const annualInterestRateValue = parseFloat(interestRateInput.value);
+  const monthsToPayValue = parseInt(monthsToPayInput.value);
+
+  if (
+    isNaN(loanAmountValue) ||
+    isNaN(annualInterestRateValue) ||
+    isNaN(monthsToPayValue)
+  ) {
+    monthlyPaymentResult.innerHTML = `Monthly Payment: €0.00`;
+  }
+
+  const monthlyInterestRate = annualInterestRateValue / 12 / 100;
+  const numberOfPayments = monthsToPayValue;
+  const monthlyPayment =
+    (loanAmountValue *
+      monthlyInterestRate *
+      Math.pow(1 + monthlyInterestRate, numberOfPayments)) /
+    (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+  monthlyPaymentResult.innerHTML = `Monthly Payment: ${monthlyPayment.toFixed(
+    2
+  )}€`;
 }
 
 window.addEventListener('load', calculateLoan);
